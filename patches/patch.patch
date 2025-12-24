@@ -1,6 +1,6 @@
-diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/.gitignore' '--exclude-from=/Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/../anotherignored.txt' '--exclude-from=/Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/../ignored.txt' ./configure.ac /Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/configure.ac
+diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/.gitignore' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/anotherignored.txt' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/ignored.txt' ./configure.ac /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/configure.ac
 *** ./configure.ac	2022-04-16 12:50:05.000000000 -0400
---- /Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/configure.ac	2025-12-23 16:53:00.926137875 -0500
+--- /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/configure.ac	2025-12-23 20:37:17.660214952 -0500
 ***************
 *** 4,9 ****
 --- 4,10 ----
@@ -120,9 +120,100 @@ diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/Users/davidgillis/r
   fi
   
   if test "x$have_uuid" = "xno"; then
-diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/.gitignore' '--exclude-from=/Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/../anotherignored.txt' '--exclude-from=/Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/../ignored.txt' ./src/Makefile.am /Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/src/Makefile.am
+diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/.gitignore' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/anotherignored.txt' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/ignored.txt' ./po/Makevars.template /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/po/Makevars.template
+*** ./po/Makevars.template	1969-12-31 19:00:00.000000000 -0500
+--- /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/po/Makevars.template	2025-12-23 20:38:23.064294769 -0500
+***************
+*** 0 ****
+--- 1,78 ----
++ # Makefile variables for PO directory in any package using GNU gettext.
++ 
++ # Usually the message domain is the same as the package name.
++ DOMAIN = $(PACKAGE)
++ 
++ # These two variables depend on the location of this directory.
++ subdir = po
++ top_builddir = ..
++ 
++ # These options get passed to xgettext.
++ XGETTEXT_OPTIONS = --keyword=_ --keyword=N_
++ 
++ # This is the copyright holder that gets inserted into the header of the
++ # $(DOMAIN).pot file.  Set this to the copyright holder of the surrounding
++ # package.  (Note that the msgstr strings, extracted from the package's
++ # sources, belong to the copyright holder of the package.)  Translators are
++ # expected to transfer the copyright for their translations to this person
++ # or entity, or to disclaim their copyright.  The empty string stands for
++ # the public domain; in this case the translators are expected to disclaim
++ # their copyright.
++ COPYRIGHT_HOLDER = Free Software Foundation, Inc.
++ 
++ # This tells whether or not to prepend "GNU " prefix to the package
++ # name that gets inserted into the header of the $(DOMAIN).pot file.
++ # Possible values are "yes", "no", or empty.  If it is empty, try to
++ # detect it automatically by scanning the files in $(top_srcdir) for
++ # "GNU packagename" string.
++ PACKAGE_GNU =
++ 
++ # This is the email address or URL to which the translators shall report
++ # bugs in the untranslated strings:
++ # - Strings which are not entire sentences, see the maintainer guidelines
++ #   in the GNU gettext documentation, section 'Preparing Strings'.
++ # - Strings which use unclear terms or require additional context to be
++ #   understood.
++ # - Strings which make invalid assumptions about notation of date, time or
++ #   money.
++ # - Pluralisation problems.
++ # - Incorrect English spelling.
++ # - Incorrect formatting.
++ # It can be your email address, or a mailing list address where translators
++ # can write to without being subscribed, or the URL of a web page through
++ # which the translators can contact you.
++ MSGID_BUGS_ADDRESS =
++ 
++ # This is the list of locale categories, beyond LC_MESSAGES, for which the
++ # message catalogs shall be used.  It is usually empty.
++ EXTRA_LOCALE_CATEGORIES =
++ 
++ # This tells whether the $(DOMAIN).pot file contains messages with an 'msgctxt'
++ # context.  Possible values are "yes" and "no".  Set this to yes if the
++ # package uses functions taking also a message context, like pgettext(), or
++ # if in $(XGETTEXT_OPTIONS) you define keywords with a context argument.
++ USE_MSGCTXT = no
++ 
++ # These options get passed to msgmerge.
++ # Useful options are in particular:
++ #   --previous            to keep previous msgids of translated messages,
++ #   --quiet               to reduce the verbosity.
++ MSGMERGE_OPTIONS =
++ 
++ # These options get passed to msginit.
++ # If you want to disable line wrapping when writing PO files, add
++ # --no-wrap to MSGMERGE_OPTIONS, XGETTEXT_OPTIONS, and
++ # MSGINIT_OPTIONS.
++ MSGINIT_OPTIONS =
++ 
++ # This tells whether or not to regenerate a PO file when $(DOMAIN).pot
++ # has changed.  Possible values are "yes" and "no".  Set this to no if
++ # the POT file is checked in the repository and the version control
++ # program ignores timestamps.
++ PO_DEPENDS_ON_POT = yes
++ 
++ # This tells whether or not to forcibly update $(DOMAIN).pot and
++ # regenerate PO files on "make dist".  Possible values are "yes" and
++ # "no".  Set this to no if the POT file and PO files are maintained
++ # externally.
++ DIST_DEPENDS_ON_UPDATE_PO = yes
+diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/.gitignore' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/anotherignored.txt' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/ignored.txt' ./po/stamp-po /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/po/stamp-po
+*** ./po/stamp-po	2022-04-16 13:38:22.000000000 -0400
+--- /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/po/stamp-po	1969-12-31 19:00:00.000000000 -0500
+***************
+*** 1 ****
+- timestamp
+--- 0 ----
+diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/.gitignore' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/anotherignored.txt' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/ignored.txt' ./src/Makefile.am /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/src/Makefile.am
 *** ./src/Makefile.am	2022-04-16 11:56:37.000000000 -0400
---- /Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/src/Makefile.am	2025-12-23 16:53:00.926321667 -0500
+--- /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/src/Makefile.am	2025-12-23 20:37:17.663997836 -0500
 ***************
 *** 1,8 ****
 --- 1,10 ----
@@ -209,9 +300,9 @@ diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/Users/davidgillis/r
      librec_la_LIBADD += $(LTLIBGCRYPT)
   endif
   
-diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/.gitignore' '--exclude-from=/Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/../anotherignored.txt' '--exclude-from=/Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/../ignored.txt' ./src/rec-crypt-sodium.c /Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/src/rec-crypt-sodium.c
+diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/.gitignore' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/anotherignored.txt' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/ignored.txt' ./src/rec-crypt-sodium.c /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/src/rec-crypt-sodium.c
 *** ./src/rec-crypt-sodium.c	1969-12-31 19:00:00.000000000 -0500
---- /Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/src/rec-crypt-sodium.c	2025-12-23 16:53:00.926528500 -0500
+--- /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/src/rec-crypt-sodium.c	2025-12-23 20:37:17.664332628 -0500
 ***************
 *** 0 ****
 --- 1,397 ----
@@ -612,9 +703,9 @@ diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/Users/davidgillis/r
 + 
 +   return res;
 + }
-diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/.gitignore' '--exclude-from=/Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/../anotherignored.txt' '--exclude-from=/Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/../ignored.txt' ./utils/recutl.c /Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/utils/recutl.c
+diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/.gitignore' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/anotherignored.txt' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/ignored.txt' ./utils/recutl.c /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/utils/recutl.c
 *** ./utils/recutl.c	2022-04-16 11:56:37.000000000 -0400
---- /Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/utils/recutl.c	2025-12-23 19:02:13.517389544 -0500
+--- /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/utils/recutl.c	2025-12-23 20:37:17.675629071 -0500
 ***************
 *** 1,6 ****
 --- 1,7 ----

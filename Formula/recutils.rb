@@ -23,8 +23,8 @@ class Recutils < Formula
   # Add libsodium encryption backend
   # TODO: Submit upstream and remove when merged
   patch do
-    url "file://#{HOMEBREW_LIBRARY_PATH}/../Taps/gillisd/homebrew-generaltap/patches/patch.patch"
-    sha256 "d661681322441683b3566c64bb9ded941143985f46bb3ac96f69c39002599083"
+    url "file://#{HOMEBREW_LIBRARY_PATH}/../Taps/gillisd/homebrew-tap/patches/patch.patch"
+    sha256 "e19c543221eeabcb875c238f3359f29ba6d27bf3b5ae7f4733f8176836078e70"
   end
 
   def install

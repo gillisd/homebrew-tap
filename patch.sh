@@ -9,7 +9,7 @@
   local scriptdir=${0:A:h}
   local tapname="gillisd/tap"
   local tapdir=$(brew --repository $tapname)
-  local srcdir=$(mktemp -d)
+  local srcdir=$(mktemp -d)/recutils
   local formula_definition=$scriptdir/Formula/recutils.rb
   local srcbranch=add-libsodium-support 
   local srcrepo=gillisd/recutils
@@ -20,8 +20,10 @@
   {
     () {
       (
-        builtin cd $srcdir >/dev/null
+        builtin cd ${srcdir:h} >/dev/null
         gh repo clone $srcrepo -- -b $srcbranch --single-branch
+        builtin cd ./recutils
+        ./bootstrap
       )
       mkdir -p $downloads
       rm -rf $downloads/*(N)
@@ -33,7 +35,11 @@
 
         cd *(/Y1)
 
-        mv $scriptdir/patches/patch.patch $scriptdir/patches/patch_$(date +%s).patch
+
+        if [[ -f $patch_path ]]
+        then
+          mv $patch_path $scriptdir/patches/patch_$(date +%s).patch
+        fi
 
         command gdiff \
           -c \
@@ -41,17 +47,18 @@
           -N \
           --exclude=build_recutils.sh \
           --exclude-from=$srcdir/.gitignore \
-          --exclude-from=$srcdir/../anotherignored.txt \
-          --exclude-from=$srcdir/../ignored.txt \
+          --exclude-from=$scriptdir/data/anotherignored.txt \
+          --exclude-from=$scriptdir/data/ignored.txt \
           . \
           $srcdir > $patch_path || true
       )
       if ! [[ -f ${patch_path:P} ]] || [[ -z ${mapfile[${patch_path:P}]} ]]; then
         print -u2 "Failed to produce patch. exiting."
-        exit 1
+        return 1
       fi
 
-      brew ruby -r digest -e '
+       brew ruby -r digest -e '
+          patch_path = File.join(__dir__, "patches/patch.patch")
           path = $<.path
           str = $<.read
           $<.close
