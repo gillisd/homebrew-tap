@@ -1,0 +1,684 @@
+diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/.gitignore' '--exclude-from=/Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/../anotherignored.txt' '--exclude-from=/Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/../ignored.txt' ./configure.ac /Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/configure.ac
+*** ./configure.ac	2022-04-16 12:50:05.000000000 -0400
+--- /Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/configure.ac	2025-12-23 16:53:00.926137875 -0500
+***************
+*** 4,9 ****
+--- 4,10 ----
+  dnl script.
+  
+  dnl Copyright (C) 2009-2022 Jose E. Marchesi
++ dnl Copyright (C) 2025 David Gillis
+  
+  dnl This program is free software: you can redistribute it and/or modify
+  dnl it under the terms of the GNU General Public License as published by
+***************
+*** 99,122 ****
+  AC_SUBST([UUIDLIBS])
+  AC_SUBST([have_uuid])
+  
+  AC_ARG_ENABLE([encryption],
+                AS_HELP_STRING([--enable-encryption],
+                               [Compile recutils with encryption support (default is YES)]),
+                [crypt_enabled=$enableval], [crypt_enabled=yes])
+  
+  crypt_support=no
+  if test "x$crypt_enabled" = "xyes"; then
+  
+!    AC_LIB_HAVE_LINKFLAGS([gcrypt],[gpg-error],[#include <gpg-error.h>])
+!    crypt_support=$HAVE_LIBGCRYPT
+  
+!    if test "x$crypt_support" = "xyes"; then
+!       AC_DEFINE([REC_CRYPT_SUPPORT],[1],[Compile encryption support])
+     fi
+  fi
+  
+  AM_CONDITIONAL([CRYPT], [test "x$crypt_support" = "xyes"])
+  AC_SUBST([crypt_support])
+  
+  have_glib=no
+  PKG_CHECK_MODULES([GLIB], [glib-2.0 >= 2.0.0],
+--- 100,166 ----
+  AC_SUBST([UUIDLIBS])
+  AC_SUBST([have_uuid])
+  
++ dnl Encryption support (libsodium preferred, libgcrypt fallback)
++ 
+  AC_ARG_ENABLE([encryption],
+                AS_HELP_STRING([--enable-encryption],
+                               [Compile recutils with encryption support (default is YES)]),
+                [crypt_enabled=$enableval], [crypt_enabled=yes])
+  
++ AC_ARG_WITH([libsodium],
++             AS_HELP_STRING([--with-libsodium],
++                            [Use libsodium for encryption (default is to prefer libsodium over libgcrypt)]),
++             [with_libsodium=$withval], [with_libsodium=check])
++ 
++ AC_ARG_WITH([libgcrypt],
++             AS_HELP_STRING([--with-libgcrypt],
++                            [Use libgcrypt for encryption (legacy)]),
++             [with_libgcrypt=$withval], [with_libgcrypt=check])
++ 
+  crypt_support=no
++ crypt_backend=none
++ 
+  if test "x$crypt_enabled" = "xyes"; then
+  
+!    dnl Try libsodium first (preferred)
+!    if test "x$with_libsodium" != "xno"; then
+!       PKG_CHECK_MODULES([SODIUM], [libsodium], [have_sodium=yes], [have_sodium=no])
+! 
+!       if test "x$have_sodium" = "xyes"; then
+!          crypt_support=yes
+!          crypt_backend=sodium
+!          AC_DEFINE([REC_CRYPT_SUPPORT], [1], [Compile encryption support])
+!          AC_DEFINE([REC_CRYPT_SODIUM], [1], [Use libsodium for encryption])
+!       elif test "x$with_libsodium" = "xyes"; then
+!          AC_MSG_ERROR([libsodium requested but not found])
+!       fi
+!    fi
+  
+!    dnl Fall back to libgcrypt if libsodium not available
+!    if test "x$crypt_support" = "xno" && test "x$with_libgcrypt" != "xno"; then
+!       AC_LIB_HAVE_LINKFLAGS([gcrypt], [gpg-error], [#include <gpg-error.h>])
+! 
+!       if test "x$HAVE_LIBGCRYPT" = "xyes"; then
+!          crypt_support=yes
+!          crypt_backend=gcrypt
+!          AC_DEFINE([REC_CRYPT_SUPPORT], [1], [Compile encryption support])
+!          AC_DEFINE([REC_CRYPT_GCRYPT], [1], [Use libgcrypt for encryption])
+!       elif test "x$with_libgcrypt" = "xyes"; then
+!          AC_MSG_ERROR([libgcrypt requested but not found])
+!       fi
+!    fi
+! 
+!    if test "x$crypt_enabled" = "xyes" && test "x$crypt_support" = "xno"; then
+!       AC_MSG_WARN([No encryption library found. Encryption support disabled.])
+     fi
+  fi
+  
+  AM_CONDITIONAL([CRYPT], [test "x$crypt_support" = "xyes"])
++ AM_CONDITIONAL([CRYPT_SODIUM], [test "x$crypt_backend" = "xsodium"])
++ AM_CONDITIONAL([CRYPT_GCRYPT], [test "x$crypt_backend" = "xgcrypt"])
++ 
+  AC_SUBST([crypt_support])
++ AC_SUBST([crypt_backend])
+  
+  have_glib=no
+  PKG_CHECK_MODULES([GLIB], [glib-2.0 >= 2.0.0],
+***************
+*** 234,239 ****
+--- 278,289 ----
+  
+  if test "x$crypt_support" = "xno"; then
+     echo "warning: building recutils without encryption support."
++    echo "warning: install libsodium or libgcrypt to enable encryption."
++ elif test "x$crypt_backend" = "xsodium"; then
++    echo "info: using libsodium for encryption (recommended)."
++ elif test "x$crypt_backend" = "xgcrypt"; then
++    echo "warning: using libgcrypt for encryption (legacy)."
++    echo "warning: consider installing libsodium for improved security."
+  fi
+  
+  if test "x$have_uuid" = "xno"; then
+diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/.gitignore' '--exclude-from=/Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/../anotherignored.txt' '--exclude-from=/Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/../ignored.txt' ./src/Makefile.am /Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/src/Makefile.am
+*** ./src/Makefile.am	2022-04-16 11:56:37.000000000 -0400
+--- /Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/src/Makefile.am	2025-12-23 16:53:00.926321667 -0500
+***************
+*** 1,8 ****
+--- 1,10 ----
+  # src/ Makefile.am
++ 
+  # GNU recutils
+  
+  # Copyright (C) 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017,
+  # 2018, 2019, 2020, 2022 Jose E. Marchesi
++ # Copyright (C) 2025 David Gillis
+  
+  # This program is free software: you can redistribute it and/or modify
+  # it under the terms of the GNU General Public License as published by
+***************
+*** 46,73 ****
+                      rec-buf.c \
+                      rec-aggregate.c
+  
+! if CRYPT
+     librec_la_SOURCES += rec-crypt.c
+  else
+     librec_la_SOURCES += rec-crypt-dummy.c
+  endif
+  
+  BUILT_SOURCES = rec-sex-tab.h
+  AM_YFLAGS = -d
+  AM_LFLAGS = -d
+  AM_CFLAGS = 
+  if USE_COVERAGE
+    AM_CFLAGS += -fprofile-arcs -ftest-coverage
+  endif
+  
+  AM_LDFLAGS = -no-undefined
+  AM_CPPFLAGS = -I$(top_builddir)/lib -I$(top_srcdir)/lib \
+                -DLOCALEDIR=\"$(localedir)\"
+  librec_la_LDFLAGS = -version-info 1:0:0
+  librec_la_LIBADD = $(top_builddir)/lib/librecutils.la \
+                     $(LIB_CLOCK_GETTIME)
+  
+! if CRYPT
+     librec_la_LIBADD += $(LTLIBGCRYPT)
+  endif
+  
+--- 48,89 ----
+                      rec-buf.c \
+                      rec-aggregate.c
+  
+! if CRYPT_SODIUM
+!    librec_la_SOURCES += rec-crypt-sodium.c
+! else
+! if CRYPT_GCRYPT
+     librec_la_SOURCES += rec-crypt.c
+  else
+     librec_la_SOURCES += rec-crypt-dummy.c
+  endif
++ endif
+  
+  BUILT_SOURCES = rec-sex-tab.h
++ 
+  AM_YFLAGS = -d
+  AM_LFLAGS = -d
++ 
+  AM_CFLAGS = 
+  if USE_COVERAGE
+    AM_CFLAGS += -fprofile-arcs -ftest-coverage
+  endif
+  
+  AM_LDFLAGS = -no-undefined
++ 
+  AM_CPPFLAGS = -I$(top_builddir)/lib -I$(top_srcdir)/lib \
+                -DLOCALEDIR=\"$(localedir)\"
++ 
+  librec_la_LDFLAGS = -version-info 1:0:0
++ 
+  librec_la_LIBADD = $(top_builddir)/lib/librecutils.la \
+                     $(LIB_CLOCK_GETTIME)
+  
+! if CRYPT_SODIUM
+!    AM_CFLAGS += $(SODIUM_CFLAGS)
+!    librec_la_LIBADD += $(SODIUM_LIBS)
+! endif
+! 
+! if CRYPT_GCRYPT
+     librec_la_LIBADD += $(LTLIBGCRYPT)
+  endif
+  
+diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/.gitignore' '--exclude-from=/Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/../anotherignored.txt' '--exclude-from=/Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/../ignored.txt' ./src/rec-crypt-sodium.c /Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/src/rec-crypt-sodium.c
+*** ./src/rec-crypt-sodium.c	1969-12-31 19:00:00.000000000 -0500
+--- /Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/src/rec-crypt-sodium.c	2025-12-23 16:53:00.926528500 -0500
+***************
+*** 0 ****
+--- 1,397 ----
++ /* rec-crypt-sodium.c - libsodium-based encryption routines.  */
++ 
++ /* Copyright (C) 2012-2020 Michał Masłowski
++    Copyright (C) 2025 David Gillis
++ 
++    Libsodium port: replaces libgcrypt AES-128-CBC with
++    XChaCha20-Poly1305 authenticated encryption and Argon2id
++    key derivation.
++ 
++    This program is free software: you can redistribute it and/or modify
++    it under the terms of the GNU General Public License as published by
++    the Free Software Foundation, either version 3 of the License, or
++    (at your option) any later version.
++ 
++    This program is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++    GNU General Public License for more details.
++ 
++    You should have received a copy of the GNU General Public License
++    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
++ 
++ #include <config.h>
++ 
++ #include <string.h>
++ #include <stdlib.h>
++ #include <sodium.h>
++ #include <base64.h>
++ 
++ #include <rec.h>
++ #include <rec-utils.h>
++ 
++ /*
++  * Encrypted format:
++  *   salt (16 bytes) || nonce (24 bytes) || ciphertext || MAC (16 bytes)
++  *
++  * Total overhead: 56 bytes before base64 encoding.
++  *
++  * NOTE: This format is NOT compatible with the old libgcrypt-based
++  * encryption. Existing encrypted fields must be decrypted with the
++  * old version before upgrading.
++  */
++ 
++ static int sodium_initialized = 0;
++ 
++ static bool
++ ensure_sodium_init (void)
++ {
++   if (sodium_initialized)
++     return true;
++ 
++   if (sodium_init () < 0)
++     return false;
++ 
++   sodium_initialized = 1;
++   return true;
++ }
++ 
++ bool
++ rec_encrypt (char   *in,
++              size_t  in_size,
++              const char   *password,
++              char  **out,
++              size_t *out_size)
++ {
++   unsigned char salt[crypto_pwhash_SALTBYTES];
++   unsigned char key[crypto_secretbox_KEYBYTES];
++   unsigned char nonce[crypto_secretbox_NONCEBYTES];
++   size_t header_size;
++ 
++   if (!ensure_sodium_init ())
++     return false;
++ 
++   /* Generate random salt and nonce.  */
++   randombytes_buf (salt, sizeof salt);
++   randombytes_buf (nonce, sizeof nonce);
++ 
++   /* Derive key from password using Argon2id.  */
++   if (crypto_pwhash (key, sizeof key,
++                      password, strlen (password),
++                      salt,
++                      crypto_pwhash_OPSLIMIT_INTERACTIVE,
++                      crypto_pwhash_MEMLIMIT_INTERACTIVE,
++                      crypto_pwhash_ALG_DEFAULT) != 0)
++     {
++       /* Out of memory.  */
++       return false;
++     }
++ 
++   /* Output format: salt || nonce || ciphertext (includes MAC).  */
++   header_size = sizeof salt + sizeof nonce;
++   *out_size = header_size + crypto_secretbox_MACBYTES + in_size;
++   *out = malloc (*out_size);
++   if (!*out)
++     {
++       sodium_memzero (key, sizeof key);
++       return false;
++     }
++ 
++   /* Copy salt and nonce to output.  */
++   memcpy (*out, salt, sizeof salt);
++   memcpy (*out + sizeof salt, nonce, sizeof nonce);
++ 
++   /* Encrypt with authenticated encryption (XSalsa20-Poly1305).  */
++   if (crypto_secretbox_easy ((unsigned char *) *out + header_size,
++                              (unsigned char *) in, in_size,
++                              nonce, key) != 0)
++     {
++       free (*out);
++       sodium_memzero (key, sizeof key);
++       return false;
++     }
++ 
++   /* Clear sensitive data.  */
++   sodium_memzero (key, sizeof key);
++ 
++   return true;
++ }
++ 
++ bool
++ rec_decrypt (char   *in,
++              size_t  in_size,
++              const char   *password,
++              char  **out,
++              size_t *out_size)
++ {
++   unsigned char salt[crypto_pwhash_SALTBYTES];
++   unsigned char key[crypto_secretbox_KEYBYTES];
++   unsigned char nonce[crypto_secretbox_NONCEBYTES];
++   size_t header_size;
++   size_t ciphertext_len;
++ 
++   if (!ensure_sodium_init ())
++     return false;
++ 
++   header_size = sizeof salt + sizeof nonce;
++ 
++   /* Verify minimum input size.  */
++   if (in_size < header_size + crypto_secretbox_MACBYTES)
++     return false;
++ 
++   /* Extract salt and nonce from input.  */
++   memcpy (salt, in, sizeof salt);
++   memcpy (nonce, in + sizeof salt, sizeof nonce);
++ 
++   /* Derive key from password using Argon2id.  */
++   if (crypto_pwhash (key, sizeof key,
++                      password, strlen (password),
++                      salt,
++                      crypto_pwhash_OPSLIMIT_INTERACTIVE,
++                      crypto_pwhash_MEMLIMIT_INTERACTIVE,
++                      crypto_pwhash_ALG_DEFAULT) != 0)
++     {
++       return false;
++     }
++ 
++   /* Calculate ciphertext length and output size.  */
++   ciphertext_len = in_size - header_size;
++   *out_size = ciphertext_len - crypto_secretbox_MACBYTES;
++ 
++   /* Allocate output buffer with extra byte for null terminator.  */
++   *out = malloc (*out_size + 1);
++   if (!*out)
++     {
++       sodium_memzero (key, sizeof key);
++       return false;
++     }
++ 
++   /* Decrypt and verify authentication tag.  */
++   if (crypto_secretbox_open_easy ((unsigned char *) *out,
++                                   (unsigned char *) in + header_size,
++                                   ciphertext_len,
++                                   nonce, key) != 0)
++     {
++       /* Authentication failed: wrong password or tampered data.  */
++       free (*out);
++       *out = NULL;
++       sodium_memzero (key, sizeof key);
++       return false;
++     }
++ 
++   /* Null terminate for string usage.  */
++   (*out)[*out_size] = '\0';
++ 
++   /* Clear sensitive data.  */
++   sodium_memzero (key, sizeof key);
++ 
++   return true;
++ }
++ 
++ bool
++ rec_encrypt_record (rec_rset_t rset,
++                     rec_record_t record,
++                     const char *password)
++ {
++   rec_field_t field;
++   bool res;
++   const char *field_name;
++   rec_fex_t confidential_fields;
++   size_t i, k, num_fields;
++ 
++   res = true;
++ 
++   if (rset)
++     {
++       confidential_fields = rec_rset_confidential (rset);
++       for (i = 0; i < rec_fex_size (confidential_fields); i++)
++         {
++           field_name =
++             rec_fex_elem_field_name (rec_fex_get (confidential_fields, i));
++ 
++           num_fields = rec_record_get_num_fields_by_name (record, field_name);
++           for (k = 0; k < num_fields; k++)
++             {
++               field = rec_record_get_field_by_name (record, field_name, k);
++               if (field)
++                 {
++                   res = rec_encrypt_field (field, password);
++                   if (!res)
++                     break;
++                 }
++             }
++         }
++     }
++ 
++   return res;
++ }
++ 
++ bool
++ rec_encrypt_field (rec_field_t field,
++                    const char *password)
++ {
++   char *field_value;
++   char *field_value_encrypted;
++   char *field_value_base64;
++   size_t out_size, base64_size;
++   char *result;
++ 
++   field_value = strdup (rec_field_value (field));
++   if (!field_value)
++     return false;
++ 
++   /* Make sure the field is not already encrypted.  */
++   if ((strlen (rec_field_value (field)) >= strlen (REC_ENCRYPTED_PREFIX))
++       && (strncmp (rec_field_value (field), REC_ENCRYPTED_PREFIX,
++                    strlen (REC_ENCRYPTED_PREFIX)) == 0))
++     {
++       free (field_value);
++       return true;
++     }
++ 
++   if (!rec_encrypt (field_value,
++                     strlen (field_value),
++                     password,
++                     &field_value_encrypted,
++                     &out_size))
++     {
++       free (field_value);
++       return false;
++     }
++ 
++   /* Encode the encrypted value into base64.  */
++   base64_size = base64_encode_alloc (field_value_encrypted,
++                                      out_size,
++                                      &field_value_base64);
++   if (base64_size == 0)
++     {
++       free (field_value);
++       free (field_value_encrypted);
++       return false;
++     }
++ 
++   base64_encode (field_value_encrypted,
++                  out_size,
++                  field_value_base64,
++                  base64_size);
++ 
++   /* Prepend "encrypted-".  */
++   result = malloc (strlen (field_value_base64)
++                    + strlen (REC_ENCRYPTED_PREFIX) + 1);
++   if (!result)
++     {
++       free (field_value);
++       free (field_value_encrypted);
++       free (field_value_base64);
++       return false;
++     }
++ 
++   memcpy (result,
++           REC_ENCRYPTED_PREFIX,
++           strlen (REC_ENCRYPTED_PREFIX));
++   memcpy (result + strlen (REC_ENCRYPTED_PREFIX),
++           field_value_base64,
++           strlen (field_value_base64));
++   result[strlen (field_value_base64)
++          + strlen (REC_ENCRYPTED_PREFIX)] = '\0';
++ 
++   /* Replace the value of the field.  */
++   rec_field_set_value (field, result);
++ 
++   /* Free resources.  */
++   free (field_value);
++   free (field_value_encrypted);
++   free (field_value_base64);
++   free (result);
++ 
++   return true;
++ }
++ 
++ bool
++ rec_decrypt_field (rec_field_t field,
++                    const char *password)
++ {
++   const char *field_value;
++   char *base64_decoded;
++   size_t base64_decoded_size;
++   char *decrypted_value;
++   size_t decrypted_value_size;
++ 
++   /* Make sure the field is encrypted.  */
++   if ((strlen (rec_field_value (field)) < strlen (REC_ENCRYPTED_PREFIX))
++       || (strncmp (rec_field_value (field), REC_ENCRYPTED_PREFIX,
++                    strlen (REC_ENCRYPTED_PREFIX)) != 0))
++     return true;
++ 
++   /* Skip the "encrypted-" prefix.  */
++   field_value = rec_field_value (field) + strlen (REC_ENCRYPTED_PREFIX);
++ 
++   /* Decode the Base64.  */
++   if (!base64_decode_alloc (field_value,
++                             strlen (field_value),
++                             &base64_decoded,
++                             &base64_decoded_size))
++     {
++       return false;
++     }
++ 
++   base64_decode (field_value,
++                  strlen (field_value),
++                  base64_decoded,
++                  &base64_decoded_size);
++ 
++   /* Decrypt.  */
++   if (rec_decrypt (base64_decoded,
++                    base64_decoded_size,
++                    password,
++                    &decrypted_value,
++                    &decrypted_value_size))
++     {
++       rec_field_set_value (field, decrypted_value);
++       free (decrypted_value);
++     }
++   else
++     {
++       free (base64_decoded);
++       return false;
++     }
++ 
++   free (base64_decoded);
++   return true;
++ }
++ 
++ bool
++ rec_decrypt_record (rec_rset_t rset,
++                     rec_record_t record,
++                     const char *password)
++ {
++   bool res = true;
++   size_t i, num_fields, k;
++   rec_field_t field;
++   const char *field_name;
++   rec_fex_t confidential_fields;
++ 
++   if (rset)
++     {
++       confidential_fields = rec_rset_confidential (rset);
++       for (i = 0; i < rec_fex_size (confidential_fields); i++)
++         {
++           field_name =
++             rec_fex_elem_field_name (rec_fex_get (confidential_fields, i));
++ 
++           num_fields = rec_record_get_num_fields_by_name (record, field_name);
++           for (k = 0; k < num_fields; k++)
++             {
++               field = rec_record_get_field_by_name (record, field_name, k);
++               if (field)
++                 {
++                   res = rec_decrypt_field (field, password);
++                   if (!res)
++                     break;
++                 }
++             }
++         }
++     }
++ 
++   return res;
++ }
+diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/.gitignore' '--exclude-from=/Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/../anotherignored.txt' '--exclude-from=/Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/../ignored.txt' ./utils/recutl.c /Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/utils/recutl.c
+*** ./utils/recutl.c	2022-04-16 11:56:37.000000000 -0400
+--- /Users/davidgillis/repos/tries/2025-12-19-moregnu/recutils/utils/recutl.c	2025-12-23 19:02:13.517389544 -0500
+***************
+*** 1,6 ****
+--- 1,7 ----
+  /* recutl.c - Common code for the utilities.  */
+  
+  /* Copyright (C) 2010-2022 Jose E. Marchesi */
++ /* Copyright (C) 2025 David Gillis */
+  
+  /* This program is free software: you can redistribute it and/or modify
+   * it under the terms of the GNU General Public License as published by
+***************
+*** 29,37 ****
+  #include <locale.h>
+  #include <gettext.h>
+  #define _(str) gettext (str)
+! #if defined REC_CRYPT_SUPPORT
+  #   include <gcrypt.h>
+  #endif
+  #include <progname.h>
+  #include <sys/stat.h>
+  #include <readline.h>
+--- 30,41 ----
+  #include <locale.h>
+  #include <gettext.h>
+  #define _(str) gettext (str)
+! #if defined REC_CRYPT_GCRYPT
+  #   include <gcrypt.h>
+  #endif
++ #if defined REC_CRYPT_SODIUM
++ #   include <sodium.h>
++ #endif
+  #include <progname.h>
+  #include <sys/stat.h>
+  #include <readline.h>
+***************
+*** 70,80 ****
+  {
+    set_program_name (xstrdup (util_name));
+  
+! #if defined REC_CRYPT_SUPPORT
+    /* Initialize libgcrypt */
+    gcry_check_version (NULL);
+    gcry_control (GCRYCTL_INITIALIZATION_FINISHED, 0);
+  #endif
+  
+    /* Initialize librec */
+    rec_init ();
+--- 74,92 ----
+  {
+    set_program_name (xstrdup (util_name));
+  
+! #if defined REC_CRYPT_GCRYPT
+    /* Initialize libgcrypt */
+    gcry_check_version (NULL);
+    gcry_control (GCRYCTL_INITIALIZATION_FINISHED, 0);
+  #endif
++ #if defined REC_CRYPT_SODIUM
++   /* Initialize libsodium */
++   if (sodium_init () < 0)
++     {
++       fprintf (stderr, _("%s: error: failed to initialize libsodium\n"), util_name);
++       exit (EXIT_FAILURE);
++     }
++ #endif
+  
+    /* Initialize librec */
+    rec_init ();
