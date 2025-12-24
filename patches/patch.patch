@@ -1,6 +1,19 @@
-diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/.gitignore' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/anotherignored.txt' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/ignored.txt' ./configure.ac /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/configure.ac
+diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.LmhBgSPCFD/recutils/.gitignore' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/anotherignored.txt' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/ignored.txt' ./AUTHORS /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.LmhBgSPCFD/recutils/AUTHORS
+*** ./AUTHORS	2018-03-17 06:11:31.000000000 -0400
+--- /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.LmhBgSPCFD/recutils/AUTHORS	2025-12-23 21:18:17.554032597 -0500
+***************
+*** 18,21 ****
+--- 18,24 ----
+  Name: Michał Masłowski
+  Email: mtjm@mtjm.eu
+  
++ Name: David Gillis
++ Email: david.gillis@hey.com
++ 
+  # End of AUTHORS
+diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.LmhBgSPCFD/recutils/.gitignore' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/anotherignored.txt' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/ignored.txt' ./configure.ac /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.LmhBgSPCFD/recutils/configure.ac
 *** ./configure.ac	2022-04-16 12:50:05.000000000 -0400
---- /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/configure.ac	2025-12-23 20:37:17.660214952 -0500
+--- /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.LmhBgSPCFD/recutils/configure.ac	2025-12-23 21:18:17.556111949 -0500
 ***************
 *** 4,9 ****
 --- 4,10 ----
@@ -120,9 +133,9 @@ diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/var/folders/zr/rd5t
   fi
   
   if test "x$have_uuid" = "xno"; then
-diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/.gitignore' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/anotherignored.txt' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/ignored.txt' ./po/Makevars.template /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/po/Makevars.template
+diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.LmhBgSPCFD/recutils/.gitignore' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/anotherignored.txt' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/ignored.txt' ./po/Makevars.template /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.LmhBgSPCFD/recutils/po/Makevars.template
 *** ./po/Makevars.template	1969-12-31 19:00:00.000000000 -0500
---- /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/po/Makevars.template	2025-12-23 20:38:23.064294769 -0500
+--- /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.LmhBgSPCFD/recutils/po/Makevars.template	2025-12-23 21:19:26.554365972 -0500
 ***************
 *** 0 ****
 --- 1,78 ----
@@ -204,16 +217,16 @@ diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/var/folders/zr/rd5t
 + # "no".  Set this to no if the POT file and PO files are maintained
 + # externally.
 + DIST_DEPENDS_ON_UPDATE_PO = yes
-diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/.gitignore' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/anotherignored.txt' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/ignored.txt' ./po/stamp-po /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/po/stamp-po
+diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.LmhBgSPCFD/recutils/.gitignore' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/anotherignored.txt' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/ignored.txt' ./po/stamp-po /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.LmhBgSPCFD/recutils/po/stamp-po
 *** ./po/stamp-po	2022-04-16 13:38:22.000000000 -0400
---- /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/po/stamp-po	1969-12-31 19:00:00.000000000 -0500
+--- /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.LmhBgSPCFD/recutils/po/stamp-po	1969-12-31 19:00:00.000000000 -0500
 ***************
 *** 1 ****
 - timestamp
 --- 0 ----
-diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/.gitignore' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/anotherignored.txt' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/ignored.txt' ./src/Makefile.am /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/src/Makefile.am
+diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.LmhBgSPCFD/recutils/.gitignore' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/anotherignored.txt' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/ignored.txt' ./src/Makefile.am /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.LmhBgSPCFD/recutils/src/Makefile.am
 *** ./src/Makefile.am	2022-04-16 11:56:37.000000000 -0400
---- /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/src/Makefile.am	2025-12-23 20:37:17.663997836 -0500
+--- /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.LmhBgSPCFD/recutils/src/Makefile.am	2025-12-23 21:18:17.561053437 -0500
 ***************
 *** 1,8 ****
 --- 1,10 ----
@@ -300,9 +313,9 @@ diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/var/folders/zr/rd5t
      librec_la_LIBADD += $(LTLIBGCRYPT)
   endif
   
-diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/.gitignore' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/anotherignored.txt' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/ignored.txt' ./src/rec-crypt-sodium.c /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/src/rec-crypt-sodium.c
+diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.LmhBgSPCFD/recutils/.gitignore' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/anotherignored.txt' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/ignored.txt' ./src/rec-crypt-sodium.c /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.LmhBgSPCFD/recutils/src/rec-crypt-sodium.c
 *** ./src/rec-crypt-sodium.c	1969-12-31 19:00:00.000000000 -0500
---- /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/src/rec-crypt-sodium.c	2025-12-23 20:37:17.664332628 -0500
+--- /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.LmhBgSPCFD/recutils/src/rec-crypt-sodium.c	2025-12-23 21:18:17.561368809 -0500
 ***************
 *** 0 ****
 --- 1,397 ----
@@ -703,9 +716,9 @@ diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/var/folders/zr/rd5t
 + 
 +   return res;
 + }
-diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/.gitignore' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/anotherignored.txt' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/ignored.txt' ./utils/recutl.c /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/utils/recutl.c
+diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.LmhBgSPCFD/recutils/.gitignore' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/anotherignored.txt' '--exclude-from=/opt/homebrew/Library/Taps/gillisd/homebrew-tap/data/ignored.txt' ./utils/recutl.c /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.LmhBgSPCFD/recutils/utils/recutl.c
 *** ./utils/recutl.c	2022-04-16 11:56:37.000000000 -0400
---- /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.vyPvqEHl9Y/recutils/utils/recutl.c	2025-12-23 20:37:17.675629071 -0500
+--- /var/folders/zr/rd5tpr5d00jbyfkqpm_nvwtm0000gn/T/tmp.LmhBgSPCFD/recutils/utils/recutl.c	2025-12-23 21:18:17.572783476 -0500
 ***************
 *** 1,6 ****
 --- 1,7 ----
@@ -773,3 +786,43 @@ diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/var/folders/zr/rd5t
   
     /* Initialize librec */
     rec_init ();
+***************
+*** 162,167 ****
+--- 174,188 ----
+            program_name,
+            PACKAGE,
+            VERSION);
++ 
++ #if defined REC_CRYPT_SODIUM
++   puts ("Encryption: libsodium");
++ #elif defined REC_CRYPT_GCRYPT
++   puts ("Encryption: libgcrypt");
++ #else
++   puts ("Encryption: none");
++ #endif
++ 
+    /* xgettext: no-wrap */
+    puts ("");
+  
+***************
+*** 170,178 ****
+       year comes around.  */
+    printf (_("\
+  Copyright (C) %s Jose E. Marchesi.\n\
+  License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.\n\
+  This is free software: you are free to change and redistribute it.\n\
+! There is NO WARRANTY, to the extent permitted by law.\n"), "2010-2020");
+  
+    puts (_("\
+  \n\
+--- 191,200 ----
+       year comes around.  */
+    printf (_("\
+  Copyright (C) %s Jose E. Marchesi.\n\
++ Copyright (C) %s David Gillis.\n\
+  License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.\n\
+  This is free software: you are free to change and redistribute it.\n\
+! There is NO WARRANTY, to the extent permitted by law.\n"), "2010-2022", "2025");
+  
+    puts (_("\
+  \n\
