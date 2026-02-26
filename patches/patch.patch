@@ -325,7 +325,7 @@ diff -c -r -N '--exclude=build_recutils.sh' '--exclude-from=/var/folders/zr/rd5t
 +    Copyright (C) 2025 David Gillis
 + 
 +    Libsodium port: replaces libgcrypt AES-128-CBC with
-+    XChaCha20-Poly1305 authenticated encryption and Argon2id
++    XSalsa20-Poly1305 authenticated encryption and Argon2id
 +    key derivation.
 + 
 +    This program is free software: you can redistribute it and/or modify
