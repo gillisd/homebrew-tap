@@ -1,17 +1,16 @@
 class Recutils < Formula
   desc "Tools to work with human-editable, plain text data files"
   homepage "https://www.gnu.org/software/recutils/"
-  url "https://ftp.gnu.org/gnu/recutils/recutils-1.9.tar.gz"
-  mirror "https://ftpmirror.gnu.org/gnu/recutils/recutils-1.9.tar.gz"
+  url "https://ftpmirror.gnu.org/gnu/recutils/recutils-1.9.tar.gz"
   sha256 "6301592b0020c14b456757ef5d434d49f6027b8e5f3a499d13362f205c486e0e"
   license "GPL-3.0-or-later"
 
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "bison" => :build
+  depends_on "help2man" => :build
   depends_on "libtool" => :build
   depends_on "pkg-config" => :build
-  depends_on "help2man" => :build
   depends_on "gettext"
   depends_on "libsodium"
   depends_on "ossp-uuid"
