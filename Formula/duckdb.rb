@@ -1,11 +1,8 @@
 class Duckdb < Formula
   desc "Embeddable SQL OLAP Database Management System"
   homepage "https://www.duckdb.org"
-  # 2.0 has no release tag yet; pin the head of its release branch.
-  url "https://github.com/duckdb/duckdb.git",
-      branch:   "v2.0-cyanoptera",
-      revision: "fc9d6e93409a2dc412b658cade45b963371cd033"
-  version "2.0.0-dev"
+  # Tracks the 2.0 release branch; install with --HEAD, update with `brew upgrade --fetch-HEAD duckdb`.
+  head "https://github.com/duckdb/duckdb.git", branch: "v2.0-cyanoptera"
   license "MIT"
 
   depends_on "cmake" => [:build, :test]
