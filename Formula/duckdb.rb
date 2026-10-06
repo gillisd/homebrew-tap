@@ -10,7 +10,11 @@ class Duckdb < Formula
   # pinned in .github/config/extensions/*.cmake. Left out: azure (the Azure SDK is not in Homebrew),
   # mysql_scanner (its build hardcodes vcpkg's include path), spatial (written against GDAL 3.8; Homebrew's
   # GDAL has a newer, incompatible VSI file API), and the test-only sqlsmith/test-utils.
+  # Linked extensions load in this order, and iceberg and glue autoload parquet (iceberg also avro)
+  # while loading, which tries to INSTALL it unless it has already loaded. So the built-in four come
+  # first; they are linked by default, but listing them here is what moves them to the front.
   LINKED_EXTENSIONS = %w[
+    core_functions parquet json icu
     autocomplete avro aws delta ducklake encodings excel fts glue httpfs iceberg inet
     odbc_scanner postgres_scanner quack sqlite_scanner tpcds tpch unity_catalog vss
   ].freeze
