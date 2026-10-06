@@ -9,14 +9,15 @@ class Duckdb < Formula
   # first-party extension is linked in. Out-of-tree ones are fetched at configure time at the commits
   # pinned in .github/config/extensions/*.cmake. Left out: azure (the Azure SDK is not in Homebrew),
   # mysql_scanner (its build hardcodes vcpkg's include path), spatial (written against GDAL 3.8; Homebrew's
-  # GDAL has a newer, incompatible VSI file API), and the test-only sqlsmith/test-utils.
+  # GDAL has a newer, incompatible VSI file API), odbc_scanner (a C-API extension built only as a
+  # loadable module, so it cannot be linked in), and the test-only sqlsmith/test-utils.
   # Linked extensions load in this order, and iceberg and glue autoload parquet (iceberg also avro)
   # while loading, which tries to INSTALL it unless it has already loaded. So the built-in four come
   # first; they are linked by default, but listing them here is what moves them to the front.
   LINKED_EXTENSIONS = %w[
     core_functions parquet json icu
     autocomplete avro aws delta ducklake encodings excel fts glue httpfs iceberg inet
-    odbc_scanner postgres_scanner quack sqlite_scanner tpcds tpch unity_catalog vss
+    postgres_scanner quack sqlite_scanner tpcds tpch unity_catalog vss
   ].freeze
 
   depends_on "cmake" => [:build, :test]
@@ -28,7 +29,6 @@ class Duckdb < Formula
   depends_on "minizip-ng"
   depends_on "openssl@3"
   depends_on "snappy"
-  depends_on "unixodbc"
   depends_on "xz"
 
   uses_from_macos "python" => :build
@@ -148,7 +148,7 @@ class Duckdb < Formula
     (testpath/"CMakeLists.txt").write <<~CMAKE
       cmake_minimum_required(VERSION 3.10)
       project(test_duckdb)
-      set(CMAKE_CXX_STANDARD 11)
+      set(CMAKE_CXX_STANDARD 17)
       find_package(DuckDB REQUIRED)
       add_executable(test test.cpp)
       target_link_libraries(test duckdb)
