@@ -25,7 +25,7 @@ class Duckdb < Formula
   # its server TLS. DuckDB's patches for them are applied where they still apply; the rest are already
   # upstream or no longer match, and one that was still needed fails the compile. Extensions not
   # listed stay at DuckDB's pins, the only combinations DuckDB's CI builds.
-  UPSTREAM_EXTENSIONS = %w[quack].freeze
+  UPSTREAM_EXTENSIONS = ["quack"].freeze
 
   depends_on "cmake" => [:build, :test]
   depends_on "rust" => :build # delta builds delta-kernel-rs with cargo
@@ -82,9 +82,13 @@ class Duckdb < Formula
       -DCMAKE_LTO_JOBS=#{ENV.make_jobs}
     ]
 
-    UPSTREAM_EXTENSIONS.each { |name| track_upstream(name) }
+    UPSTREAM_EXTENSIONS.each do |name|
+      track_upstream(name)
+    end
     system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
-    UPSTREAM_EXTENSIONS.each { |name| apply_duckdb_patches(name) }
+    UPSTREAM_EXTENSIONS.each do |name|
+      apply_duckdb_patches(name)
+    end
 
     # unity_catalog copies GetSecret and CatalogTypeIsSupported from postgres_scanner without making
     # them file-local, which collides once both are linked into one binary (upstream never does).
@@ -104,31 +108,40 @@ class Duckdb < Formula
   # fetch, which would stop at the first one that no longer applies.
   def track_upstream(name)
     config = buildpath/".github/config/extensions/#{name}.cmake"
-    url = config.read[/GIT_URL\s+(\S+)/, 1]
+    contents = config.read
+    url = contents[/GIT_URL\s+(\S+)/, 1]
     commit = upstream_head(url)
     ohai "#{name}: #{url} @ #{commit}"
-    inreplace config do |s|
-      s.gsub!(/GIT_TAG\s+\S+/, "GIT_TAG #{commit}")
-      s.gsub!(/\bAPPLY_PATCHES\b/, "", audit_result: false)
+    inreplace config do |cmake|
+      cmake.gsub!(/GIT_TAG\s+\S+/, "GIT_TAG #{commit}")
+      cmake.gsub!(/\bAPPLY_PATCHES\b/, "", audit_result: false)
     end
   end
 
   # The newest commit on +url+'s branch named like DuckDB's, else on its default branch.
   def upstream_head(url)
-    branch = head.specs.fetch(:branch)
+    head.specs => { branch: }
     refs = Utils.safe_popen_read("git", "ls-remote", url, "HEAD", "refs/heads/#{branch}")
-    refs[%r{^(\h{40})\trefs/heads/#{Regexp.escape(branch)}$}, 1] || refs[/^(\h{40})\tHEAD$/, 1] ||
-      odie("cannot resolve the head of #{url}")
+    branch_head = refs[%r{^(\h{40})\trefs/heads/#{Regexp.escape(branch)}$}, 1]
+    default_head = refs[/^(\h{40})\tHEAD$/, 1]
+    branch_head || default_head || odie("cannot resolve the head of #{url}")
   end
 
   def apply_duckdb_patches(name)
     source = buildpath/"build/_deps/#{name}_extension_fc-src"
-    (buildpath/".github/patches/extensions/#{name}").glob("*.patch").sort.each do |patch|
-      if quiet_system "patch", "-d", source, "-p1", "--forward", "--dry-run", "-i", patch
-        system "patch", "-d", source, "-p1", "--forward", "-i", patch
-      else
-        opoo "#{name}: skipped #{patch.basename}, which does not apply to upstream"
+    patches = buildpath/".github/patches/extensions/#{name}"
+    patches
+      .glob("*.patch")
+      .sort
+      .each do |patch|
+        apply_duckdb_patch(name, source, patch)
       end
+  end
+
+  def apply_duckdb_patch(name, source, patch)
+    case quiet_system("patch", "-d", source, "-p1", "--forward", "--dry-run", "-i", patch)
+    in true then system "patch", "-d", source, "-p1", "--forward", "-i", patch
+    else opoo "#{name}: skipped #{patch.basename}, which does not apply to upstream"
     end
   end
 
