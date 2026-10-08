@@ -1,9 +1,25 @@
 class Duckdb < Formula
   desc "Embeddable SQL OLAP Database Management System"
   homepage "https://www.duckdb.org"
-  # Tracks the 2.0 release branch; install with --HEAD, update with `brew upgrade --fetch-HEAD duckdb`.
-  head "https://github.com/duckdb/duckdb.git", branch: "v2.0-cyanoptera"
   license "MIT"
+
+  # Tracks the 2.0 release branch; install with --HEAD, update with `brew upgrade --fetch-HEAD duckdb`.
+  head do
+    url "https://github.com/duckdb/duckdb.git", branch: "v2.0-cyanoptera"
+
+    # Unlike the other out-of-tree extensions, quack is built from main: DuckDB pins it to a commit
+    # that predates quack's server TLS.
+    resource "quack" do
+      url "https://github.com/duckdb/duckdb-quack.git", branch: "main"
+
+      # DuckDB's own fix for building quack against the 2.0 branch, where CreateViewInfo::ParseSelect
+      # takes a Parser; quack main still calls the one-argument form. Remove once quack main has it.
+      patch do
+        url "https://raw.githubusercontent.com/duckdb/duckdb/f0f549e7cfe37c507a060c7e7f533539b31adc15/.github/patches/extensions/quack/0003-builtin-parser.patch"
+        sha256 "60fa784ebed09b070da48ac62cc05f48e185bcc61930753fb7a65bd4275a4e5d"
+      end
+    end
+  end
 
   # A -dev build cannot INSTALL extensions (the repository is keyed by release commit), so every
   # first-party extension is linked in. Out-of-tree ones are fetched at configure time at the commits
@@ -19,13 +35,6 @@ class Duckdb < Formula
     autocomplete avro aws delta ducklake encodings excel fts glue httpfs iceberg inet
     postgres_scanner quack sqlite_scanner tpcds tpch unity_catalog vss
   ].freeze
-
-  # Out-of-tree extensions built from their upstream head (the branch named like DuckDB's, else the
-  # default branch) rather than DuckDB's pin, which can trail upstream by weeks: quack's pin predates
-  # its server TLS. DuckDB's patches for them are applied where they still apply; the rest are already
-  # upstream or no longer match, and one that was still needed fails the compile. Extensions not
-  # listed stay at DuckDB's pins, the only combinations DuckDB's CI builds.
-  UPSTREAM_EXTENSIONS = ["quack"].freeze
 
   depends_on "cmake" => [:build, :test]
   depends_on "rust" => :build # delta builds delta-kernel-rs with cargo
@@ -82,13 +91,14 @@ class Duckdb < Formula
       -DCMAKE_LTO_JOBS=#{ENV.make_jobs}
     ]
 
-    UPSTREAM_EXTENSIONS.each do |name|
-      track_upstream(name)
-    end
+    # DuckDB builds quack from this checkout instead of fetching its pinned commit. The DuckDB that
+    # quack carries as a submodule goes: quack builds against the DuckDB being built here.
+    quack = buildpath/"quack"
+    resource("quack").stage(quack)
+    rm_r quack/"duckdb"
+    ENV["DUCKDB_QUACK_DIRECTORY"] = quack
+
     system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
-    UPSTREAM_EXTENSIONS.each do |name|
-      apply_duckdb_patches(name)
-    end
 
     # unity_catalog copies GetSecret and CatalogTypeIsSupported from postgres_scanner without making
     # them file-local, which collides once both are linked into one binary (upstream never does).
@@ -102,47 +112,6 @@ class Duckdb < Formula
     # The cli tool was renamed (0.1.8 -> 0.1.9)
     # Create a symlink to not break compatibility
     bin.install_symlink bin/"duckdb" => "duckdb_cli"
-  end
-
-  # Points DuckDB's config for +name+ at its upstream head, and takes its patches over from DuckDB's
-  # fetch, which would stop at the first one that no longer applies.
-  def track_upstream(name)
-    config = buildpath/".github/config/extensions/#{name}.cmake"
-    contents = config.read
-    url = contents[/GIT_URL\s+(\S+)/, 1]
-    commit = upstream_head(url)
-    ohai "#{name}: #{url} @ #{commit}"
-    inreplace config do |cmake|
-      cmake.gsub!(/GIT_TAG\s+\S+/, "GIT_TAG #{commit}")
-      cmake.gsub!(/\bAPPLY_PATCHES\b/, "", audit_result: false)
-    end
-  end
-
-  # The newest commit on +url+'s branch named like DuckDB's, else on its default branch.
-  def upstream_head(url)
-    head.specs => { branch: }
-    refs = Utils.safe_popen_read("git", "ls-remote", url, "HEAD", "refs/heads/#{branch}")
-    branch_head = refs[%r{^(\h{40})\trefs/heads/#{Regexp.escape(branch)}$}, 1]
-    default_head = refs[/^(\h{40})\tHEAD$/, 1]
-    branch_head || default_head || odie("cannot resolve the head of #{url}")
-  end
-
-  def apply_duckdb_patches(name)
-    source = buildpath/"build/_deps/#{name}_extension_fc-src"
-    patches = buildpath/".github/patches/extensions/#{name}"
-    patches
-      .glob("*.patch")
-      .sort
-      .each do |patch|
-        apply_duckdb_patch(name, source, patch)
-      end
-  end
-
-  def apply_duckdb_patch(name, source, patch)
-    case quiet_system("patch", "-d", source, "-p1", "--forward", "--dry-run", "-i", patch)
-    in true then system "patch", "-d", source, "-p1", "--forward", "-i", patch
-    else opoo "#{name}: skipped #{patch.basename}, which does not apply to upstream"
-    end
   end
 
   # avro finds jansson by vcpkg's CMake package name; Homebrew's jansson is built with autotools and
