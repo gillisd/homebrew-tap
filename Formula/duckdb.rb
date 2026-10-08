@@ -3,7 +3,6 @@ class Duckdb < Formula
   homepage "https://www.duckdb.org"
   license "MIT"
 
-  # Tracks the 2.0 release branch; install with --HEAD, update with `brew upgrade --fetch-HEAD duckdb`.
   head do
     url "https://github.com/duckdb/duckdb.git", branch: "v2.0-cyanoptera"
 
@@ -11,16 +10,8 @@ class Duckdb < Formula
     # that predates quack's server TLS.
     resource "quack" do
       url "https://github.com/duckdb/duckdb-quack.git", branch: "main"
-
-      # DuckDB's own fix for building quack against the 2.0 branch, where CreateViewInfo::ParseSelect
-      # takes a Parser; quack main still calls the one-argument form. Remove once quack main has it.
-      patch do
-        url "https://raw.githubusercontent.com/duckdb/duckdb/f0f549e7cfe37c507a060c7e7f533539b31adc15/.github/patches/extensions/quack/0003-builtin-parser.patch"
-        sha256 "60fa784ebed09b070da48ac62cc05f48e185bcc61930753fb7a65bd4275a4e5d"
-      end
     end
   end
-
   # A -dev build cannot INSTALL extensions (the repository is keyed by release commit), so every
   # first-party extension is linked in. Out-of-tree ones are fetched at configure time at the commits
   # pinned in .github/config/extensions/*.cmake. Left out: azure (the Azure SDK is not in Homebrew),
@@ -79,6 +70,7 @@ class Duckdb < Formula
     # patched) per DuckDB commit in .github/config/extensions, which a --HEAD build must follow, so
     # let DuckDB fetch them itself rather than freeze 20 pins and their patches in this formula.
     args = %W[
+      -DCMAKE_C_STANDARD=17
       -DHOMEBREW_ALLOW_FETCHCONTENT=ON
       -DBUILD_EXTENSIONS=#{LINKED_EXTENSIONS.join(";")}
       -DLINK_CORE_EXTENSIONS=ON
