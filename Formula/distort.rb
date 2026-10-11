@@ -25,6 +25,8 @@ class Distort < Formula
         revision: "92d4a0deb5f8f332d3ea800f8fb41d0b56b4169a"
   end
 
+  deny_network_access!
+
   def install
     resource("gnulib").stage buildpath/"gnulib"
 
