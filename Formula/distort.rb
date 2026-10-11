@@ -13,6 +13,11 @@ class Distort < Formula
   depends_on "pkgconf" => :build
   depends_on "libsodium"
 
+  fails_with :gcc do
+    version "13"
+    cause "Requires `-std=gnu23`"
+  end
+
   # ./bootstrap otherwise clones gnulib's full history on every build.
   resource "gnulib" do
     url "https://github.com/coreutils/gnulib.git",
