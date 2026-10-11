@@ -3,6 +3,15 @@ class Duckdb < Formula
   homepage "https://www.duckdb.org"
   license "MIT"
 
+  stable do
+    url "https://github.com/duckdb/duckdb.git", revision: "53d3003"
+    version "v2.0-cyanoptera"
+
+    resource "quack" do
+      url "https://github.com/duckdb/duckdb-quack.git", revision: "c19ca48"
+    end
+  end
+
   head do
     url "https://github.com/duckdb/duckdb.git", branch: "v2.0-cyanoptera"
 
