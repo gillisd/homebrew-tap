@@ -17,7 +17,7 @@ class Distort < Formula
   # ./bootstrap otherwise clones gnulib's full history on every build.
   resource "gnulib" do
     url "https://github.com/coreutils/gnulib.git",
-        depth: 1,
+        depth:    1,
         revision: "92d4a0deb5f8f332d3ea800f8fb41d0b56b4169a"
   end
 
@@ -43,4 +43,3 @@ class Distort < Formula
     assert_match "invalid stream header", shell_output("#{bin}/distort decrypt -k wrong_key enc 2>&1", 1)
   end
 end
-

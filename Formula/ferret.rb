@@ -18,13 +18,13 @@ class Ferret < Formula
     (bin/"ferret").write <<~SCRIPT
       #!/bin/bash
       cd "#{libexec}"
-      exec "#{Formula["tcl-tk"].opt_bin}/wish" src/gerwin.tcl "$@"
+      exec "#{formula_opt_bin("tcl-tk")}/wish" src/gerwin.tcl "$@"
     SCRIPT
   end
 
   test do
     assert_predicate bin/"ferret", :executable?
-    assert_predicate libexec/"src/gerwin.tcl", :exist?
-    assert_predicate libexec/"widgets/bwidget/pkgIndex.tcl", :exist?
+    assert_path_exists libexec/"src/gerwin.tcl"
+    assert_path_exists libexec/"widgets/bwidget/pkgIndex.tcl"
   end
 end

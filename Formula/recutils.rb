@@ -27,7 +27,7 @@ class Recutils < Formula
   end
 
   def install
-    ENV.prepend_path "PATH", Formula["bison"].opt_bin
+    ENV.prepend_path "PATH", formula_opt_bin("bison")
 
     system "autoreconf", "-fiv"
 

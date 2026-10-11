@@ -17,11 +17,11 @@ class Pspp < Formula
   depends_on "readline"
   depends_on "zlib"
 
+  uses_from_macos "perl"
+
   on_macos do
     depends_on "gettext"
   end
-
-  uses_from_macos "perl"
 
   def install
     # Replace outdated config.guess (2018) that may not recognize modern archs

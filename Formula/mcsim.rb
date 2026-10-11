@@ -45,7 +45,7 @@ class Mcsim < Formula
       End.
     MODEL
     system "#{bin}/mod", testpath/"linear.model", testpath/"linear.c"
-    assert_predicate testpath/"linear.c", :exist?
+    assert_path_exists testpath/"linear.c"
 
     # Info page must be registered in the info directory
     dir_content = (HOMEBREW_PREFIX/"share/info/dir").read

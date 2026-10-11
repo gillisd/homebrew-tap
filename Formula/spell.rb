@@ -32,7 +32,7 @@ class Spell < Formula
 
     # Functional test: check spelling of a word list
     (testpath/"words.txt").write "hello\nwrold\ngoodbye\n"
-    output = shell_output("#{bin}/spell #{testpath}/words.txt", 0)
+    output = shell_output("#{bin}/spell #{testpath}/words.txt")
     assert_match "wrold", output
 
     # Info page must be registered in the info directory

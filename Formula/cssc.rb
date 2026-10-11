@@ -23,7 +23,7 @@ class Cssc < Formula
     (testpath/"hello.c").write "#include <stdio.h>\nint main(){return 0;}\n"
     system "#{bin}/sccs", "create", "hello.c"
     system "#{bin}/sccs", "get", "hello.c"
-    assert_predicate testpath/"hello.c", :exist?
+    assert_path_exists testpath/"hello.c"
 
     # Info page must be registered in the info directory
     dir_content = (HOMEBREW_PREFIX/"share/info/dir").read
