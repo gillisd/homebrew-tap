@@ -1,4 +1,4 @@
-class WordnetAT31 < Formula
+class Wordnet < Formula
   desc "Lexical database for the English language"
   homepage "https://wordnet.princeton.edu/"
   url "https://wordnetcode.princeton.edu/3.0/WordNet-3.0.tar.bz2"
