@@ -44,6 +44,6 @@ class Distort < Formula
     assert_equal plaintext, pipe_output("#{bin}/distort decrypt -k key", ciphertext).b
 
     (testpath/"enc").binwrite ciphertext
-    assert_match "invalid stream header", shell_output("#{bin}/distort decrypt -k wrong_key enc 2>&1", 1)
+    assert_match "authentication failed", shell_output("#{bin}/distort decrypt -k wrong_key enc 2>&1", 1)
   end
 end
