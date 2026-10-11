@@ -1,12 +1,11 @@
 class Distort < Formula
   desc "Simple, symmetric, streaming encryption via xchacha20-poly1305"
   homepage "https://github.com/gillisd/distort"
-  # Private repo: fetched over SSH with the agent socket Homebrew forwards into its sandbox.
-  url "ssh://git@github.com/gillisd/distort.git",
-      revision: "b34af1546ac85b23e67a08b3e7e9bbf8aaf2da69"
+  url "https://github.com/gillisd/distort.git",
+      revision: "ddb0ad3bcf9c1c74fe062b58ad5700dcd7ab964f"
   version "0.1.0"
   license "MIT"
-  head "ssh://git@github.com/gillisd/distort.git", branch: "master"
+  head "https://github.com/gillisd/distort.git", branch: "master"
 
   depends_on "autoconf" => :build
   depends_on "automake" => :build
