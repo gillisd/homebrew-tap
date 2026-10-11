@@ -12,9 +12,6 @@ class WordnetAT31 < Formula
   # database and all tools are freely available on the download page."
   #
   # Also needs unmaintained TCL/Tk 8
-  deprecate! date: "2026-06-22", because: :unmaintained
-  disable! date: "2027-06-22", because: :unmaintained
-
   depends_on "tcl-tk@8"
 
   resource "dict" do
