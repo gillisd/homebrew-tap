@@ -10,6 +10,12 @@ class Mcsim < Formula
   depends_on "help2man" => :build
   depends_on "gsl"
 
+  # Fix -flat_namespace being used on Big Sur and later.
+  patch do
+    file "patches/libtool/configure-big_sur.diff"
+    type :unofficial
+  end
+
   def install
     # Replace outdated config.guess/config.sub (2018) that may not recognize modern archs
     %w[config.guess config.sub].each do |fn|
