@@ -1,12 +1,11 @@
 class Distort < Formula
   desc "Simple, symmetric, streaming encryption via xchacha20-poly1305"
   homepage "https://github.com/gillisd/distort"
-  # Private repo: fetched over SSH with the agent socket Homebrew forwards into its sandbox.
-  url "ssh://git@github.com/gillisd/distort.git",
-      revision: "b34af1546ac85b23e67a08b3e7e9bbf8aaf2da69"
+  url "https://github.com/gillisd/distort.git",
+      revision: "ddb0ad3bcf9c1c74fe062b58ad5700dcd7ab964f"
   version "0.1.0"
   license "MIT"
-  head "ssh://git@github.com/gillisd/distort.git", branch: "master"
+  head "https://github.com/gillisd/distort.git", branch: "master"
 
   depends_on "autoconf" => :build
   depends_on "automake" => :build
@@ -14,10 +13,15 @@ class Distort < Formula
   depends_on "pkgconf" => :build
   depends_on "libsodium"
 
+  fails_with :gcc do
+    version "13"
+    cause "Requires `-std=gnu23`"
+  end
+
   # ./bootstrap otherwise clones gnulib's full history on every build.
   resource "gnulib" do
     url "https://github.com/coreutils/gnulib.git",
-        depth: 1,
+        depth:    1,
         revision: "92d4a0deb5f8f332d3ea800f8fb41d0b56b4169a"
   end
 
@@ -40,7 +44,6 @@ class Distort < Formula
     assert_equal plaintext, pipe_output("#{bin}/distort decrypt -k key", ciphertext).b
 
     (testpath/"enc").binwrite ciphertext
-    assert_match "invalid stream header", shell_output("#{bin}/distort decrypt -k wrong_key enc 2>&1", 1)
+    assert_match "authentication failed", shell_output("#{bin}/distort decrypt -k wrong_key enc 2>&1", 1)
   end
 end
-

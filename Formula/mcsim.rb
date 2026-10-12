@@ -10,6 +10,12 @@ class Mcsim < Formula
   depends_on "help2man" => :build
   depends_on "gsl"
 
+  # Fix -flat_namespace being used on Big Sur and later.
+  patch do
+    file "patches/libtool/configure-big_sur.diff"
+    type :unofficial
+  end
+
   def install
     # Replace outdated config.guess/config.sub (2018) that may not recognize modern archs
     %w[config.guess config.sub].each do |fn|
@@ -45,7 +51,7 @@ class Mcsim < Formula
       End.
     MODEL
     system "#{bin}/mod", testpath/"linear.model", testpath/"linear.c"
-    assert_predicate testpath/"linear.c", :exist?
+    assert_path_exists testpath/"linear.c"
 
     # Info page must be registered in the info directory
     dir_content = (HOMEBREW_PREFIX/"share/info/dir").read

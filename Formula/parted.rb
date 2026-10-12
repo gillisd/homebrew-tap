@@ -6,8 +6,8 @@ class Parted < Formula
   sha256 "3b43dbe33cca0f9a18601ebab56b7852b128ec1a3df3a9b30ccde5e73359e612"
   license "GPL-3.0-or-later"
 
-  depends_on "util-linux" # for libuuid
   depends_on :linux
+  depends_on "util-linux" # for libuuid
 
   on_macos do
     depends_on "gettext"

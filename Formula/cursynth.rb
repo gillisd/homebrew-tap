@@ -8,24 +8,24 @@ class Cursynth < Formula
 
   depends_on "automake" => :build
   depends_on "help2man" => :build
-  on_linux do
-    depends_on "alsa-lib"
-  end
-
   uses_from_macos "ncurses"
 
   on_macos do
     depends_on "gettext"
   end
 
+  on_linux do
+    depends_on "alsa-lib"
+  end
+
   def install
     # config.guess (2013) predates aarch64. AM_GNU_GETTEXT means
     # autoreconf would invoke autopoint, so copy files from automake.
+    bundled_library_dirs = %w[mopo rtaudio/config rtmidi/config]
     %w[config.guess config.sub].each do |fn|
       am_dir = Formula["automake"].opt_share/"automake-#{Formula["automake"].version.major_minor}"
       cp am_dir/fn, fn
-      # Also update the bundled libraries' copies
-      %w[mopo rtaudio/config rtmidi/config].each do |subdir|
+      bundled_library_dirs.each do |subdir|
         cp am_dir/fn, "#{subdir}/#{fn}" if File.exist?("#{subdir}/#{fn}")
       end
     end

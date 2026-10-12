@@ -25,7 +25,7 @@ class Stow < Formula
     (pkg_dir/"hello").write "#!/bin/sh\necho hello\n"
     system bin/"stow", "-d", stow_dir, "-t", target_dir, "-S", "test-pkg"
     assert_predicate target_dir/"bin", :symlink?
-    assert_predicate target_dir/"bin/hello", :exist?
+    assert_path_exists target_dir/"bin/hello"
 
     # Info page must be registered in the info directory
     assert_match "stow", (HOMEBREW_PREFIX/"share/info/dir").read

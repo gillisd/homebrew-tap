@@ -174,4 +174,3 @@ class Duckdb < Formula
     assert_equal "45.0", shell_output(testpath/"build/test")
   end
 end
-
