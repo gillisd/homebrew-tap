@@ -23,7 +23,7 @@ class Recutils < Formula
   # TODO: Submit upstream and remove when merged
   patch do
     url "file://#{HOMEBREW_LIBRARY_PATH}/../Taps/gillisd/homebrew-tap/patches/patch.patch"
-    sha256 "caf03894c0caca2dd1fb85cd88a45abc57dcf88c8ee9646c38ae7e1955f7699e"
+    sha256 "af0cebbb9a600caf863f53d585568ab599180edeebea0a0f5b7861a9bce34b41"
   end
 
   def install
