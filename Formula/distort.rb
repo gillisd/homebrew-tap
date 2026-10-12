@@ -7,6 +7,15 @@ class Distort < Formula
   license "MIT"
   head "https://github.com/gillisd/distort.git", branch: "master"
 
+  bottle do
+    root_url "https://ghcr.io/v2/gillisd/tap"
+    rebuild 1
+    sha256 cellar: :any, arm64_golden_gate: "23972de1c684a425581ec5914de96757fd35ed299cbbda8e2e537ffe19260479"
+    sha256 cellar: :any, arm64_tahoe:       "610fe7bee26bce1450b0394ae68a5b8db22b831b808bdc7a1311a08c20df344d"
+    sha256 cellar: :any, arm64_linux:       "c45d0e4d7869ade66084f2a76fe5f0583cd438ecd3017a1f66ad38679eb78a4f"
+    sha256 cellar: :any, x86_64_linux:      "3635a1f2bb272f12c26a1fb5391a8b61d459af5a01d80589c6c751337e707205"
+  end
+
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "help2man" => :build
