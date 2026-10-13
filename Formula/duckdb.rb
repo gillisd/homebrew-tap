@@ -107,7 +107,9 @@ class Duckdb < Formula
     inreplace unity_catalog/"unity_catalog_extension.cpp", /^unique_ptr<SecretEntry> GetSecret\(/, "static \\0"
     inreplace unity_catalog/"storage/uc_schema_entry.cpp", /^bool CatalogTypeIsSupported\(/, "static \\0"
 
-    system "cmake", "--build", "build"
+    # Only the installed targets: the extensions link into them, and their loadable
+    # .duckdb_extension builds carry a metadata footer that breaks Homebrew's ad-hoc re-signing.
+    system "cmake", "--build", "build", "--target", "shell", "duckdb", "duckdb_static"
     system "cmake", "--install", "build"
 
     # The cli tool was renamed (0.1.8 -> 0.1.9)
