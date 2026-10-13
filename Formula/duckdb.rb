@@ -130,7 +130,7 @@ class Duckdb < Formula
 
     # Only the installed targets: the extensions link into them, and their loadable
     # .duckdb_extension builds carry a metadata footer that breaks Homebrew's ad-hoc re-signing.
-    system "cmake", "--build", "build", "--target", "shell", "duckdb", "duckdb_static"
+    system "cmake", "--build", "build", "--target", "shell", "duckdb", "duckdb_static", "duckdb_cpp_api"
     system "cmake", "--install", "build"
 
     # The cli tool was renamed (0.1.8 -> 0.1.9)
