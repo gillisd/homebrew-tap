@@ -110,6 +110,10 @@ class Duckdb < Formula
     inreplace unity_catalog/"unity_catalog_extension.cpp", /^unique_ptr<SecretEntry> GetSecret\(/, "static \\0"
     inreplace unity_catalog/"storage/uc_schema_entry.cpp", /^bool CatalogTypeIsSupported\(/, "static \\0"
 
+    # iceberg alone installs its loadable module, which the targets built below never produce.
+    inreplace buildpath/"build/_deps/iceberg_extension_fc-src/CMakeLists.txt",
+              "TARGETS ${EXTENSION_NAME} ${TARGET_NAME}_loadable_extension", "TARGETS ${EXTENSION_NAME}"
+
     # Only the installed targets: the extensions link into them, and their loadable
     # .duckdb_extension builds carry a metadata footer that breaks Homebrew's ad-hoc re-signing.
     system "cmake", "--build", "build", "--target", "shell", "duckdb", "duckdb_static"
