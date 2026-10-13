@@ -80,7 +80,6 @@ class Duckdb < Formula
     link_libpq = "-L#{formula_opt_lib("libpq")} -lpq"
 
     # ENABLE_EXTENSION_AUTOLOADING/AUTOINSTALL were removed in 2.0: both default to on at runtime.
-    # Thin LTO (clang) / -flto (gcc); the wrapper passes -flto through.
     # Brew traps FetchContent so sources arrive as resources. Out-of-tree extensions are pinned (and
     # patched) per DuckDB commit in .github/config/extensions, which a --HEAD build must follow, so
     # let DuckDB fetch them itself rather than freeze 20 pins and their patches in this formula.
@@ -94,8 +93,6 @@ class Duckdb < Formula
       -DCMAKE_EXE_LINKER_FLAGS=#{link_libpq}
       -DCMAKE_SHARED_LINKER_FLAGS=#{link_libpq}
       -DDUCKDB_EXPLICIT_VERSION=v2.0.0-dev0
-      -DCMAKE_LTO=thin
-      -DCMAKE_LTO_JOBS=#{ENV.make_jobs}
     ]
 
     # DuckDB builds quack from this checkout instead of fetching its pinned commit. The DuckDB that
