@@ -102,6 +102,24 @@ class Duckdb < Formula
     rm_r quack/"duckdb"
     ENV["DUCKDB_QUACK_DIRECTORY"] = quack
 
+    # iceberg alone installs its loadable module, which the targets built below never produce. Patched
+    # through DuckDB's own patch directory: editing the fetched tree re-triggers its populate step.
+    (buildpath/".github/patches/extensions/iceberg/9999-homebrew-static-install.patch").write <<~PATCH
+      diff --git a/CMakeLists.txt b/CMakeLists.txt
+      index dde54e548..9ddfb9660 100644
+      --- a/CMakeLists.txt
+      +++ b/CMakeLists.txt
+      @@ -60,7 +60,7 @@ target_link_libraries(${TARGET_NAME}_loadable_extension roaring::roaring
+                             roaring::roaring-headers roaring::roaring-headers-cpp)
+
+       install(
+      -  TARGETS ${EXTENSION_NAME} ${TARGET_NAME}_loadable_extension
+      +  TARGETS ${EXTENSION_NAME}
+         EXPORT "${DUCKDB_EXPORT_SET}"
+         LIBRARY DESTINATION "${INSTALL_LIB_DIR}"
+         ARCHIVE DESTINATION "${INSTALL_LIB_DIR}")
+    PATCH
+
     system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
 
     # unity_catalog copies GetSecret and CatalogTypeIsSupported from postgres_scanner without making
@@ -109,10 +127,6 @@ class Duckdb < Formula
     unity_catalog = buildpath/"build/_deps/unity_catalog_extension_fc-src/src"
     inreplace unity_catalog/"unity_catalog_extension.cpp", /^unique_ptr<SecretEntry> GetSecret\(/, "static \\0"
     inreplace unity_catalog/"storage/uc_schema_entry.cpp", /^bool CatalogTypeIsSupported\(/, "static \\0"
-
-    # iceberg alone installs its loadable module, which the targets built below never produce.
-    inreplace buildpath/"build/_deps/iceberg_extension_fc-src/CMakeLists.txt",
-              "TARGETS ${EXTENSION_NAME} ${TARGET_NAME}_loadable_extension", "TARGETS ${EXTENSION_NAME}"
 
     # Only the installed targets: the extensions link into them, and their loadable
     # .duckdb_extension builds carry a metadata footer that breaks Homebrew's ad-hoc re-signing.
