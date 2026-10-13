@@ -3,6 +3,15 @@ class Duckdb < Formula
   homepage "https://www.duckdb.org"
   license "MIT"
 
+  stable do
+    url "https://github.com/duckdb/duckdb.git", revision: "53d3003"
+    version "v2.0-cyanoptera"
+
+    resource "quack" do
+      url "https://github.com/duckdb/duckdb-quack.git", revision: "c19ca48"
+    end
+  end
+
   head do
     url "https://github.com/duckdb/duckdb.git", branch: "v2.0-cyanoptera"
 
@@ -27,6 +36,12 @@ class Duckdb < Formula
     postgres_scanner quack sqlite_scanner tpcds tpch unity_catalog vss
   ].freeze
 
+  # The oldest CPU the build must run on, for the C/C++ wrapper and for rustc. Raise or lower per fleet.
+  CPU_FLOOR = {
+    arm:   ["-march=armv8.2-a", "--codegen target-feature=+v8.2a"],
+    intel: ["-march=x86-64-v3", "--codegen target-cpu=x86-64-v3"],
+  }.freeze
+
   depends_on "cmake" => [:build, :test]
   depends_on "rust" => :build # delta builds delta-kernel-rs with cargo
   depends_on "aws-sdk-cpp"
@@ -44,11 +59,11 @@ class Duckdb < Formula
 
   def install
     # Under Homebrew's make/ninja shims its cc wrapper drops every -O and -mcpu flag a build passes
-    # (refurbish_arg in shims/super/cc) and compiles at -Os for a generic CPU. Ask the wrapper for -O3
-    # and a native target instead, so they reach every compile, the extensions' included.
-    # Not portable to other machines.
+    # (refurbish_arg in shims/super/cc). Ask the wrapper for -O3 and CPU_FLOOR instead, so they reach
+    # every compile, the extensions' included. On Linux brew also hands rustc target-cpu=native through
+    # HOMEBREW_RUSTFLAGS (Hardware.rustflags_target_cpu), which would leak native code in via delta.
     ENV.O3
-    ENV["HOMEBREW_OPTFLAGS"] = Hardware::CPU.arm? ? "-mcpu=native" : "-march=native"
+    ENV["HOMEBREW_OPTFLAGS"], ENV["HOMEBREW_RUSTFLAGS"] = CPU_FLOOR.fetch(Hardware::CPU.arm? ? :arm : :intel)
     # delta's cargo build compiles aws-lc's jitterentropy, which must be -O0 and is rejected otherwise;
     # the wrapper would rewrite that to -O3, so cargo's C compiles go to clang directly.
     ENV["TARGET_CC"] = DevelopmentTools.locate(OS.mac? ? "clang" : "gcc").to_s
@@ -98,7 +113,9 @@ class Duckdb < Formula
     inreplace unity_catalog/"unity_catalog_extension.cpp", /^unique_ptr<SecretEntry> GetSecret\(/, "static \\0"
     inreplace unity_catalog/"storage/uc_schema_entry.cpp", /^bool CatalogTypeIsSupported\(/, "static \\0"
 
-    system "cmake", "--build", "build"
+    # Only the installed targets: the extensions link into them, and their loadable
+    # .duckdb_extension builds carry a metadata footer that breaks Homebrew's ad-hoc re-signing.
+    system "cmake", "--build", "build", "--target", "shell", "duckdb", "duckdb_static"
     system "cmake", "--install", "build"
 
     # The cli tool was renamed (0.1.8 -> 0.1.9)
